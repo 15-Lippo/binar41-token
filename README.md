@@ -1,2 +1,117 @@
 # binar41-token
-{ "scriptPubKey": "OP_RETURN 534c5000 01 4d494e54 15b8aa04f6e1b7b0d595a10c9d427dfa1bb7e3c0f99186c55c515c6a9bb7322b 02 8000000000000000", "slpData": { "graph": [ { "_id": "60c77295fe0d2f6d61a6898a", "tokenDetails": { "tokenIdHex": "15b8aa04f6e1b7b0d595a10c9d427dfa1bb7e3c0f99186c55c515c6a9bb7322b" }, "graphTxn": { "txid": "23460f8cc201c1cbb3638fde53f4b02975778cbcee66650abb1f58b463e54b60", "details": { "decimals": null, "tokenIdHex": "15b8aa04f6e1b7b0d595a10c9d427dfa1bb7e3c0f99186c55c515c6a9bb7322b", "timestamp": null, "timestamp_unix": null, "transactionType": "MINT", "versionType": 1, "documentUri": null, "documentSha256Hex": null, "symbol": null, "name": null, "batonVout": 2, "containsBaton": true, "genesisOrMintQuantity": "92233720368.54775808", "sendOutputs": null }, "outputs": [ { "slpAmount": "92233720368.54775808", "address":, "vout": 1, "bchSatoshis": 546, "spendTxid": "23807d0df7e5e7765620eacac4044de08e15fe80e838a6007587b99e88c221c1", "status": "SPENT_SAME_TOKEN", "invalidReason": null }, { "slpAmount": "0", "address": "simpleledger:qzgssk65ud83tqclqn59jkd2m94mdvyvpg48mys82w", "vout": 2, "bchSatoshis": 546, "spendTxid": null, "status": "BATON_UNSPENT", "invalidReason": null } ], "inputs": [ { "address": "simpleledger:qzgssk65ud83tqclqn59jkd2m94mdvyvpg48mys82w", "txid": "15b8aa04f6e1b7b0d595a10c9d427dfa1bb7e3c0f99186c55c515c6a9bb7322b", "vout": 2, "bchSatoshis": 546, "slpAmount": "0" } ], "_blockHash": "AAAAAAAAAAAA2/TBxypF5MZUoYptOcjAiyVrwqJzpxM=", "_pruneHeight": null } } ], "slp": { "valid": true, "detail": { "decimals": 8, "tokenIdHex": "15b8aa04f6e1b7b0d595a10c9d427dfa1bb7e3c0f99186c55c515c6a9bb7322b", "transactionType": "MINT", "versionType": 1, "documentUri": "Binar41.com", "documentSha256Hex": null, "symbol": "BNR41", "name": "Binar41", "txnBatonVout": 2, "txnContainsBaton": true, "outputs": [ { "address": "simpleledger:qzgssk65ud83tqclqn59jkd2m94mdvyvpg48mys82w", "amount": "92233720368.54775808" } ] }, "invalidReason": null, "schema_version": 79 } } }
+/**
+ *Submitted for verification at BscScan.com on 2021-07-22
+*/
+
+// SPDX-License-Identifier: UNLISCENSED
+
+pragma solidity 0.8.4;
+
+
+/**
+ * @title Binar41
+ * @dev Very simple BEP20 Token example, where all tokens are pre-assigned to the creator.
+ * Note they can later distribute these tokens as they wish using `transfer` and other
+ * `BEP20` functions.
+ * USE IT ONLY FOR LEARNING PURPOSES. SHOULD BE MODIFIED FOR PRODUCTION
+ */
+ 
+contract Binar41{
+    string public name = "Binar41";
+    string public symbol = "BNR41";
+    uint256 public totalSupply = 1000000000000000000000000; // 1 million tokens
+    uint8 public decimals = 18;
+    
+    /**
+     * @dev Emitted when `value` tokens are moved from one account (`from`) to
+     * another (`to`).
+     *
+     * Note that `value` may be zero.
+     */
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+
+     /**
+     * @dev Emitted when the allowance of a `spender` for an `owner` is set by
+     * a call to {approve}. `value` is the new allowance.
+     */
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
+        uint256 _value
+    );
+
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    /**
+     * @dev Constructor that gives msg.sender all of existing tokens.
+     */
+    constructor() {
+        balanceOf[msg.sender] = totalSupply;
+    }
+
+     /**
+     * @dev Moves `amount` tokens from the caller's account to `recipient`.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function transfer(address _to, uint256 _value)
+        public
+        returns (bool success)
+    {
+        require(balanceOf[msg.sender] >= _value);
+        balanceOf[msg.sender] -= _value;
+        balanceOf[_to] += _value;
+        emit Transfer(msg.sender, _to, _value);
+        return true;
+    }
+    
+     /**
+     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * IMPORTANT: Beware that changing an allowance with this method brings the risk
+     * that someone may use both the old and the new allowance by unfortunate
+     * transaction ordering. One possible solution to mitigate this race
+     * condition is to first reduce the spender's allowance to 0 and set the
+     * desired value afterwards:
+     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+     *
+     * Emits an {Approval} event.
+     */
+
+    function approve(address _spender, uint256 _value)
+        public
+        returns (bool success)
+    {
+        allowance[msg.sender][_spender] = _value;
+        emit Approval(msg.sender, _spender, _value);
+        return true;
+    }
+
+    /**
+     * @dev Moves `amount` tokens from `sender` to `recipient` using the
+     * allowance mechanism. `amount` is then deducted from the caller's
+     * allowance.
+     *
+     * Returns a boolean value indicating whether the operation succeeded.
+     *
+     * Emits a {Transfer} event.
+     */
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
+        require(_value <= balanceOf[_from]);
+        require(_value <= allowance[_from][msg.sender]);
+        balanceOf[_from] -= _value;
+        balanceOf[_to] += _value;
+        allowance[_from][msg.sender] -= _value;
+        emit Transfer(_from, _to, _value);
+        return true;
+    }
+}
